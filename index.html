@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The American Decision 2026 | Live Midterm Results</title>
-<meta name="description" content="Live, unofficial 2026 Senate and House election results from across the United States. A patriotic national results desk with the math for control of Congress.">
+<meta name="description" content="Live, unofficial 2026 Senate and House election totals. Choose a chamber to open every race.">
 <meta name="theme-color" content="#07182c">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2307182c' stroke='%23b28a2e' stroke-width='3'/%3E%3Cpath d='M32 12l5.9 14.7 15.8 1.2-12.1 10.2 3.7 15.4L32 45.2 18.7 53.5l3.7-15.4L10.3 27.9l15.8-1.2z' fill='%23d6b25e'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2212,19 +2212,763 @@ img, svg { display: block; max-width: 100%; }
 
 
 
+/* =========================================================
+   SIMPLIFIED LANDING — CHAMBER TOTALS + EXPANDABLE RACES
+   ========================================================= */
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main { flex: 1 0 auto; }
+
+.site-footer { margin-top: auto; }
+
+.landing-intro {
+  position: relative;
+  overflow: hidden;
+  padding: 28px 0 26px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(29, 91, 159, 0.30), transparent 38%),
+    radial-gradient(circle at 6% 100%, rgba(181, 18, 43, 0.18), transparent 34%),
+    linear-gradient(112deg, #040d19 0%, #07182c 55%, #0d2848 100%);
+  border-bottom: 4px solid var(--gold);
+}
+
+.landing-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(90deg, transparent, #000 45%, #000 100%);
+  opacity: 0.45;
+}
+
+.landing-intro .wrap { position: relative; z-index: 1; }
+
+.intro-kicker {
+  color: var(--gold-2);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.intro-kicker span { color: #5f7690; margin: 0 6px; }
+
+.landing-intro h1 {
+  margin: 7px 0 7px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(42px, 5.6vw, 68px);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+}
+
+.landing-intro p {
+  max-width: 680px;
+  margin: 0 0 16px;
+  color: #d5dee8;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.math-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 17px;
+  max-width: 1100px;
+  padding: 9px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+.math-label {
+  color: var(--gold-2);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+.math-bar > span:not(.math-label):not(.math-note) {
+  color: #dce5ef;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.math-bar b {
+  margin-right: 3px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1;
+}
+.math-note {
+  margin-left: auto;
+  color: #9fb1c7;
+  font-size: 8.5px;
+  line-height: 1.35;
+  text-align: right;
+}
+
+/* ---------- Desk status strip ---------- */
+
+.desk-bar {
+  background: var(--navy-950);
+  color: #c6d1df;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+.desk-bar-inner {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.desk-left {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  white-space: nowrap;
+}
+.desk-left .live-dot { margin-right: 7px; }
+.desk-mid {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #aab7c7;
+  white-space: nowrap;
+}
+.desk-mid .ok-dot { width: 6px; height: 6px; }
+.desk-sep { color: #5d6d81; }
+.desk-right { color: #aab7c7; white-space: nowrap; }
+
+.data-alert-global {
+  width: min(1400px, calc(100% - 48px));
+  margin: 10px auto 0;
+}
+.data-alert-global[hidden] { display: none; }
+
+/* ---------- Chamber totals ---------- */
+
+.chambers-section {
+  padding: 24px 0 28px;
+  background: var(--paper);
+}
+
+.chamber-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.chamber-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 18px 20px 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--navy-900);
+  background: #fff;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+.chamber-card.house { border-top-color: var(--dem); }
+.chamber-card.senate { border-top-color: var(--gop); }
+.chamber-card:hover {
+  border-color: #aeb8c5;
+  box-shadow: 0 8px 24px rgba(8, 22, 40, 0.11);
+  transform: translateY(-1px);
+}
+.chamber-card:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+.chamber-card.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold) inset, 0 8px 24px rgba(8, 22, 40, 0.12);
+}
+
+.chamber-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+.chamber-kicker {
+  display: block;
+  color: var(--red);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+.chamber-head h2 {
+  margin: 2px 0 2px;
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.chamber-sub {
+  display: block;
+  color: #74808e;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.chamber-threshold { flex: 0 0 auto; text-align: right; }
+.chamber-threshold b {
+  display: block;
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 0.82;
+  font-variant-numeric: tabular-nums;
+}
+.chamber-threshold span {
+  display: block;
+  margin-top: 4px;
+  color: #6f7a88;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.chamber-called {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin: 13px 0 3px;
+}
+.chamber-called b {
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 0.8;
+  font-variant-numeric: tabular-nums;
+}
+.chamber-called span {
+  color: #6f7a88;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.chamber-split {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin: 8px 0 9px;
+}
+.chamber-split span {
+  color: #6f7a88;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  white-space: nowrap;
+}
+.chamber-split b {
+  margin-right: 2px;
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.chamber-split .d b { color: var(--dem); }
+.chamber-split .r b { color: var(--gop); }
+.chamber-split .o b { color: var(--gold); }
+
+.chamber-bar {
+  position: relative;
+  display: flex;
+  height: 18px;
+  margin-top: 14px;
+  overflow: visible;
+  background: #e5e0d5;
+  border: 1px solid #d5cfc1;
+}
+.chamber-bar .seat-dem,
+.chamber-bar .seat-gop,
+.chamber-bar .seat-other {
+  display: block;
+  width: 0;
+  height: 100%;
+  transition: width 0.7s ease;
+}
+.chamber-bar .seat-dem { background: linear-gradient(180deg, var(--dem-2), var(--dem)); }
+.chamber-bar .seat-gop { margin-left: auto; background: linear-gradient(180deg, var(--gop-2), var(--gop)); }
+.chamber-bar .seat-other { background: var(--gold); }
+
+.chamber-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.chamber-foot > span:last-child {
+  color: #77828f;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.chamber-tie {
+  margin-top: 9px;
+  padding: 6px 8px;
+  border-left: 3px solid var(--gold);
+  background: var(--gold-soft);
+  color: #5c4a24;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.chamber-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: auto -20px 0;
+  padding: 11px 20px;
+  background: var(--navy-900);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  transition: background 0.15s ease;
+}
+.chamber-cta span:last-child { font-size: 16px; line-height: 1; }
+.chamber-card:hover .chamber-cta { background: var(--navy-800); }
+.chamber-card.active .chamber-cta { background: var(--red); }
+
+.chamber-hint {
+  margin: 14px 0 0;
+  color: #77828f;
+  font-size: 9px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+/* ---------- Expanded race board ---------- */
+
+.race-board {
+  padding: 22px 0 36px;
+  background: #fff;
+  border-top: 4px solid var(--gold);
+  box-shadow: inset 0 1px 0 rgba(7, 24, 44, 0.06);
+}
+.race-board[hidden] { display: none; }
+
+.board-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--navy-900);
+}
+.board-head h2 {
+  margin: 2px 0 3px;
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 0.94;
+  text-transform: uppercase;
+}
+#raceBoardSub {
+  margin: 0;
+  color: #75808e;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.board-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.board-close {
+  height: 27px;
+  padding: 0 9px;
+  border: 1px solid var(--navy-900);
+  background: #fff;
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+.board-close:hover { background: var(--navy-900); color: #fff; }
+
+.race-board .controls {
+  padding: 12px 0;
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+}
+.race-board .results-meta {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+.race-board .race-grid {
+  padding: 14px 0 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Three-column boards keep 435 races manageable once expanded. */
+.race-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.state-group .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* ---------- New-layout responsive ---------- */
+
+@media (max-width: 1180px) {
+  .race-board .race-grid,
+  .race-grid,
+  .state-group .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .math-note { margin-left: 0; width: 100%; text-align: left; }
+  .desk-mid { display: none; }
+  .chamber-grid { grid-template-columns: 1fr; }
+  .chamber-card { max-width: 720px; }
+  .board-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .board-actions { justify-content: flex-start; }
+}
+
+@media (max-width: 720px) {
+  .landing-intro { padding: 22px 0 22px; }
+  .landing-intro h1 { font-size: clamp(38px, 11vw, 54px); }
+  .landing-intro p { font-size: 14px; }
+  .math-bar { gap: 7px 12px; }
+  .math-note { font-size: 8px; }
+  .desk-bar-inner { min-height: 32px; gap: 8px; }
+  .desk-left { font-size: 7.5px; }
+  .desk-right { display: none; }
+  .chamber-card { padding: 16px 16px 0; }
+  .chamber-head h2 { font-size: 29px; }
+  .chamber-threshold b { font-size: 36px; }
+  .chamber-called b { font-size: 44px; }
+  .chamber-split { gap: 10px; }
+  .chamber-split b { font-size: 20px; }
+  .chamber-cta { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; font-size: 11px; }
+  .board-head h2 { font-size: 32px; }
+  .race-board { padding: 18px 0 28px; }
+  .race-board .race-grid,
+  .race-grid,
+  .state-group .cards {
+    grid-template-columns: 1fr;
+  }
+  .data-alert-global { width: calc(100% - 26px); }
+}
+
+/* ---------- Top crawl ---------- */
+
+.crawl-bar {
+  display: flex;
+  align-items: stretch;
+  min-height: 38px;
+  overflow: hidden;
+  background: var(--red);
+  color: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.crawl-label {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 2px;
+  padding: 0 14px;
+  background: var(--navy-950);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.crawl-track {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.crawl-content {
+  display: flex;
+  width: max-content;
+  animation: crawl 58s linear infinite;
+  will-change: transform;
+}
+.crawl-track:hover .crawl-content { animation-play-state: paused; }
+.crawl-content span {
+  display: inline-block;
+  padding-right: 90px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@keyframes crawl {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.crawl-time {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 0 14px;
+  border-left: 1px solid rgba(255, 255, 255, 0.27);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* ---------- Intro flag and broadcast badge ---------- */
+
+.intro-flag {
+  position: absolute;
+  top: -48px;
+  right: -86px;
+  width: min(640px, 52vw);
+  opacity: 0.15;
+  pointer-events: none;
+  filter: saturate(0.9);
+}
+
+.landing-intro .wrap { z-index: 2; }
+
+.intro-kicker {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.intro-kicker span { color: #5f7690; margin: 0; }
+.intro-kicker .intro-badge {
+  margin-right: 6px;
+  padding: 3px 6px 2px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* ---------- Balance of power heading ---------- */
+
+.chambers-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 12px;
+}
+.chambers-head h2 {
+  margin: 1px 0 0;
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 31px;
+  font-weight: 800;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.chambers-note {
+  color: var(--red);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+.chamber-kicker::before {
+  content: "★";
+  margin-right: 5px;
+  color: var(--gold);
+}
+
+/* ---------- Latest-calls strip ---------- */
+
+.latest-strip {
+  padding: 9px 0;
+  background: #fff;
+  border-top: 3px solid var(--navy-900);
+  border-bottom: 1px solid var(--line);
+}
+.latest-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.latest-head {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 7px;
+}
+.latest-label {
+  display: flex;
+  align-items: center;
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.latest-label .live-dot { margin-right: 5px; }
+
+.latest-list {
+  display: flex;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.latest-list .side-empty {
+  align-self: center;
+  margin: 0;
+  font-size: 9.5px;
+}
+.latest-list .call-item {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 150px;
+  max-width: 240px;
+  padding: 3px 11px;
+  border-bottom: 0;
+  border-right: 1px solid var(--line);
+}
+.latest-list .call-item:last-child { border-right: 0; }
+.latest-list .call-badge { width: 28px; height: 24px; font-size: 10px; }
+.latest-list .call-name { font-size: 9px; }
+
+@media (max-width: 900px) {
+  .crawl-time { display: none; }
+  .chambers-head { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .chambers-note { text-align: left; }
+}
+
+@media (max-width: 720px) {
+  .crawl-bar { min-height: 34px; }
+  .crawl-label { padding: 0 9px; font-size: 10px; }
+  .crawl-content span { padding-right: 55px; font-size: 9px; }
+  .intro-flag { display: none; }
+  .intro-badge { font-size: 8px; }
+  .latest-inner { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .latest-list { width: 100%; }
+  .latest-list .call-item { min-width: 165px; }
+}
+
+.latest-next {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 6px;
+  margin-left: 4px;
+  padding-left: 14px;
+  border-left: 1px solid var(--line);
+  white-space: nowrap;
+}
+.latest-next span {
+  color: var(--red);
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+.latest-next b {
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 900px) {
+  .latest-next { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crawl-content {
+    width: 100%;
+    animation: none;
+    padding: 8px 12px;
+  }
+  .crawl-content span {
+    padding-right: 0;
+    white-space: normal;
+  }
+  .crawl-content span:last-child { display: none; }
+}
+
 </style>
 </head>
 <body>
-<a class="skip-link" href="#race-center">Skip to live results</a>
+<a class="skip-link" href="#chambers">Skip to chamber totals</a>
 
 <div class="top-rule" aria-hidden="true"></div>
 
-<div class="utility-bar">
-  <div class="wrap utility-inner">
-    <div class="utility-left"><span class="star">★</span> DECISION 2026 <span class="sep">|</span> <span class="long">NATIONAL RESULTS DESK</span></div>
-    <div class="utility-center">TUESDAY, NOVEMBER 3, 2026 <span class="sep">•</span> ALL TIMES EASTERN</div>
-    <div class="utility-right"><span class="live-dot muted" id="utilityDot"></span> AUTO-REFRESH <b id="utilityModeText">15 MIN</b></div>
+<div class="crawl-bar" role="region" aria-label="Live election crawl">
+  <div class="crawl-label" id="crawlLabel"><span class="live-dot muted"></span> PRE-SHOW</div>
+  <div class="crawl-track">
+    <div class="crawl-content" id="crawlContent">
+      <span id="crawlA">Live coverage begins at 6:00 PM ET. All 435 House seats and 35 Senate seats are on the ballot.</span>
+      <span id="crawlB" aria-hidden="true">Live coverage begins at 6:00 PM ET. All 435 House seats and 35 Senate seats are on the ballot.</span>
+    </div>
   </div>
+  <div class="crawl-time" id="crawlClock">8:00 AM ET</div>
 </div>
 
 <header class="masthead">
@@ -2255,7 +2999,7 @@ img, svg { display: block; max-width: 100%; }
       <span class="brand-copy">
         <span class="brand-eyebrow">THE AMERICAN DECISION</span>
         <span class="brand-title">2026 MIDTERM ELECTIONS</span>
-        <span class="brand-sub">NATIONAL RESULTS DESK <span class="red">•</span> UNOFFICIAL LIVE RESULTS</span>
+        <span class="brand-sub">TUESDAY, NOVEMBER 3, 2026 <span class="red">•</span> UNOFFICIAL LIVE RESULTS</span>
       </span>
     </a>
 
@@ -2271,36 +3015,21 @@ img, svg { display: block; max-width: 100%; }
   </div>
 </header>
 
-<nav class="main-nav" aria-label="Dashboard sections">
-  <div class="wrap nav-inner">
-    <div class="nav-links">
-      <a href="#top" class="active">HOME</a>
-      <a href="#race-center" data-tab-link="senate">SENATE <span>35</span></a>
-      <a href="#race-center" data-tab-link="house">HOUSE <span>435</span></a>
-      <a href="#race-center" data-tab-link="all">ALL RACES <span>470</span></a>
-      <a href="#path">PATH TO POWER</a>
-      <a href="#poll-times">POLL TIMES</a>
-    </div>
-    <div class="nav-status"><span class="live-dot muted" id="navDot"></span><span id="navStatus">AWAITING 6:00 PM ET</span></div>
+<div class="desk-bar">
+  <div class="wrap desk-bar-inner">
+    <div class="desk-left"><span class="live-dot muted" id="boardDot"></span><b id="boardStatus">PRE-SHOW &bull; POLLS NOT YET CLOSED</b></div>
+    <div class="desk-mid"><span class="ok-dot" id="dataDot"></span><span id="dataStatus">Pre-show snapshot</span><span class="desk-sep">&bull;</span><span>UNOFFICIAL RESULTS</span></div>
+    <div class="desk-right"><span id="boardUpdated">AWAITING FIRST DATA CHECK</span></div>
   </div>
-</nav>
-
-<div class="ticker" role="region" aria-label="Live election ticker">
-  <div class="ticker-label" id="tickerLabel"><span class="live-dot"></span> PRE-SHOW</div>
-  <div class="ticker-track">
-    <div class="ticker-content" id="tickerContent">
-      <span id="tickerA">Live coverage begins at 6:00 PM ET. All 435 House seats and 35 Senate seats are on the ballot.</span>
-      <span id="tickerB" aria-hidden="true">Live coverage begins at 6:00 PM ET. All 435 House seats and 35 Senate seats are on the ballot.</span>
-    </div>
-  </div>
-  <div class="ticker-time"><span id="tickerClock">8:00 AM ET</span></div>
 </div>
 
+<div id="dataAlert" class="data-alert data-alert-global" hidden></div>
+
 <main id="top">
-  <section class="hero" aria-labelledby="heroTitle">
-    <svg class="hero-flag" viewBox="0 0 760 420" aria-hidden="true" focusable="false">
+  <section class="landing-intro" id="chambers" aria-labelledby="introTitle">
+    <svg class="intro-flag" viewBox="0 0 760 420" aria-hidden="true" focusable="false">
       <defs>
-        <pattern id="heroStars" width="38" height="38" patternUnits="userSpaceOnUse">
+        <pattern id="introStars" width="38" height="38" patternUnits="userSpaceOnUse">
           <path d="M19 4l3.2 8.1 8.7.6-6.7 5.5 2.1 8.5-7.3-4.7-7.3 4.7 2.1-8.5-6.7-5.5 8.7-.6z" fill="#ffffff"/>
         </pattern>
       </defs>
@@ -2312,152 +3041,133 @@ img, svg { display: block; max-width: 100%; }
         <rect y="384" width="760" height="32"/>
       </g>
       <rect width="342" height="226" fill="#0b2440"/>
-      <rect width="342" height="226" fill="url(#heroStars)"/>
+      <rect width="342" height="226" fill="url(#introStars)"/>
     </svg>
-
-    <div class="wrap hero-inner">
-      <div class="hero-copy">
-        <div class="kicker"><span class="kicker-line"></span> DECISION 2026 <span class="kicker-line"></span></div>
-        <h1 id="heroTitle">AMERICA'S<br><em>MIDTERM</em> DECISION</h1>
-        <p class="hero-lede">Every Senate seat. Every House district. One national results desk. Follow the vote as it comes in, the calls as they are made, and the math that decides control of Congress.</p>
-
-        <div class="mobile-math" aria-label="Democrats need a net gain of 3 House seats and 4 Senate seats">
-          <span class="mobile-math-label">DEMOCRATS NEED</span>
-          <span><b>+3</b> HOUSE</span>
-          <span><b>+4</b> SENATE</span>
-        </div>
-
-        <div class="hero-stats" aria-label="Election facts">
-          <div class="hero-stat"><b>35</b><span>Senate races</span></div>
-          <div class="hero-stat"><b>435</b><span>House races</span></div>
-          <div class="hero-stat"><b id="heroCalled">0</b><span>Races called</span></div>
-          <div class="hero-stat"><b>8</b><span>Hours live</span></div>
-        </div>
-
-        <div class="hero-actions">
-          <a class="btn-primary" href="#race-center">FOLLOW LIVE RESULTS</a>
-          <a class="btn-ghost" href="#path">THE DEMOCRATS' PATH</a>
-        </div>
+    <div class="wrap">
+      <div class="intro-kicker"><span class="intro-badge">SPECIAL COVERAGE</span> DECISION 2026 <span>|</span> NATIONAL RESULTS DESK</div>
+      <h1 id="introTitle">WHO CONTROLS CONGRESS?</h1>
+      <p>Choose a chamber to see the live totals. Open it to see every race.</p>
+      <div class="math-bar" aria-label="Democrats need three House seats and four Senate seats">
+        <span class="math-label">DEMOCRATS NEED</span>
+        <span><b>+3</b> HOUSE</span>
+        <span><b>+4</b> SENATE</span>
+        <span class="math-note">A 50&ndash;50 Senate still favors Republicans &mdash; the vice president breaks the tie.</span>
       </div>
-
-      <aside class="path-card" id="path" aria-labelledby="pathTitle">
-        <div class="path-top"><span class="path-kicker">THE MATH</span><span class="path-star" aria-hidden="true">★</span></div>
-        <h2 id="pathTitle">WHAT DEMOCRATS NEED</h2>
-
-        <div class="path-row">
-          <div class="path-office">U.S. HOUSE</div>
-          <div class="path-equation"><span>215</span><span class="op">+</span><span class="gain">3</span><span class="op">=</span><strong>218</strong></div>
-          <div class="path-note">A net gain of 3 seats for a House majority. All 435 seats are on the ballot.</div>
-        </div>
-
-        <div class="path-row">
-          <div class="path-office">U.S. SENATE</div>
-          <div class="path-equation"><span>47</span><span class="op">+</span><span class="gain">4</span><span class="op">=</span><strong>51</strong></div>
-          <div class="path-note">A net gain of 4 seats for a Senate majority. 35 seats are on the ballot, including two special elections. The 47 includes two independents who caucus with Democrats.</div>
-        </div>
-
-        <div class="path-warning">
-          <span class="warn-mark" aria-hidden="true">!</span>
-          <p><strong>A 50&ndash;50 Senate is not Democratic control.</strong> The Republican vice president breaks the tie.</p>
-        </div>
-
-        <div class="path-live"><span>LIVE MATH</span><span id="pathLive">0 OF 470 RACES CALLED</span></div>
-      </aside>
     </div>
   </section>
 
-  <section class="power-board" aria-labelledby="powerTitle">
+  <section class="chambers-section" aria-label="Chamber totals">
     <div class="wrap">
-      <div class="section-top">
+      <div class="chambers-head">
         <div>
           <div class="section-kicker">THE ROAD TO CONTROL</div>
-          <h2 id="powerTitle">BALANCE OF POWER</h2>
+          <h2>BALANCE OF POWER</h2>
         </div>
-        <div class="section-meta">
-          <span><span class="live-dot muted" id="boardDot"></span><span id="boardStatus">PRE-SHOW &bull; POLLS NOT YET CLOSED</span></span>
-          <span id="boardUpdated">AWAITING FIRST DATA CHECK</span>
-        </div>
+        <div class="chambers-note">SELECT A CHAMBER TO OPEN ITS RACES</div>
       </div>
-
-      <div class="power-grid">
-        <article class="power-panel house" aria-labelledby="housePanelTitle">
-          <div class="power-head">
+      <div class="chamber-grid">
+        <article class="chamber-card house" id="houseCard" data-chamber="house" role="button" tabindex="0" aria-expanded="false" aria-controls="raceBoard">
+          <div class="chamber-head">
             <div>
-              <span class="office-label" id="housePanelTitle">U.S. HOUSE</span>
-              <span class="office-sub">ALL 435 SEATS ON THE BALLOT</span>
+              <span class="chamber-kicker">U.S. HOUSE</span>
+              <h2>HOUSE</h2>
+              <span class="chamber-sub">ALL 435 VOTING SEATS</span>
             </div>
-            <div class="threshold"><b>218</b><span>TO CONTROL</span></div>
+            <div class="chamber-threshold"><b>218</b><span>TO CONTROL</span></div>
           </div>
-          <div class="power-body">
-            <div class="power-stat"><b id="houseCalled">0</b><span>RACES CALLED</span></div>
-            <div class="power-split">
-              <span class="d"><b id="houseDCalled">0</b> DEM</span>
-              <span class="r"><b id="houseRCalled">0</b> GOP</span>
-              <span class="o"><b id="houseOut">435</b> OUT</span>
-            </div>
+
+          <div class="chamber-called"><b id="houseCalled">0</b><span>OF 435 CALLED</span></div>
+
+          <div class="chamber-split">
+            <span class="d"><b id="houseDCalled">0</b> DEM</span>
+            <span class="r"><b id="houseRCalled">0</b> GOP</span>
+            <span class="o"><b id="houseOut">435</b> OUT</span>
           </div>
-          <div class="seat-bar" id="houseBar" role="img" aria-label="House seats called">
+
+          <div class="chamber-bar" id="houseBar" role="img" aria-label="House seats called">
             <span class="seat-dem" id="houseBarD"></span>
             <span class="seat-other" id="houseBarO"></span>
             <span class="seat-gop" id="houseBarR"></span>
             <span class="threshold-mark" style="left:50.11%"><i>218</i></span>
           </div>
-          <div class="power-foot">
+
+          <div class="chamber-foot">
             <span class="need-chip" id="houseNeedChip">DEMS NEED NET +3</span>
-            <span class="power-note" id="houseNote">GOP won 220&ndash;215 in 2024</span>
+            <span id="houseNote">215 + 3 = 218</span>
           </div>
+
+          <div class="chamber-cta"><span id="houseToggleText">VIEW ALL 435 HOUSE RACES</span><span id="houseToggleIcon" aria-hidden="true">&#9662;</span></div>
         </article>
 
-        <article class="power-panel senate" aria-labelledby="senatePanelTitle">
-          <div class="power-head">
+        <article class="chamber-card senate" id="senateCard" data-chamber="senate" role="button" tabindex="0" aria-expanded="false" aria-controls="raceBoard">
+          <div class="chamber-head">
             <div>
-              <span class="office-label" id="senatePanelTitle">U.S. SENATE</span>
-              <span class="office-sub">35 SEATS ON THE BALLOT &bull; 22 R / 13 D</span>
+              <span class="chamber-kicker">U.S. SENATE</span>
+              <h2>SENATE</h2>
+              <span class="chamber-sub">35 SEATS &bull; 22 R / 13 D</span>
             </div>
-            <div class="threshold"><b>51</b><span>TO CONTROL</span></div>
+            <div class="chamber-threshold"><b>51</b><span>TO CONTROL</span></div>
           </div>
-          <div class="power-body">
-            <div class="power-stat"><b id="senateCalled">0</b><span>RACES CALLED</span></div>
-            <div class="power-split">
-              <span class="d"><b id="senateDCalled">0</b> DEM</span>
-              <span class="r"><b id="senateRCalled">0</b> GOP</span>
-              <span class="o"><b id="senateOut">35</b> OUT</span>
-            </div>
+
+          <div class="chamber-called"><b id="senateCalled">0</b><span>OF 35 CALLED</span></div>
+
+          <div class="chamber-split">
+            <span class="d"><b id="senateDCalled">34</b> DEM</span>
+            <span class="r"><b id="senateRCalled">31</b> GOP</span>
+            <span class="o"><b id="senateOut">35</b> UP</span>
           </div>
-          <div class="seat-bar" id="senateBar" role="img" aria-label="Senate seats called">
+
+          <div class="chamber-bar" id="senateBar" role="img" aria-label="Senate seats called">
             <span class="seat-dem" id="senateBarD"></span>
             <span class="seat-other" id="senateBarO"></span>
             <span class="seat-gop" id="senateBarR"></span>
             <span class="threshold-mark" style="left:51%"><i>51</i></span>
           </div>
-          <div class="power-foot">
+
+          <div class="chamber-foot">
             <span class="need-chip" id="senateNeedChip">DEMS NEED NET +4</span>
-            <span class="power-note" id="senateNote">D/I caucus holds 47 seats</span>
+            <span id="senateNote">47 + 4 = 51</span>
           </div>
+
+          <div class="chamber-tie">D/I caucus starts at 47. A 50&ndash;50 Senate still organizes under Republican control.</div>
+
+          <div class="chamber-cta"><span id="senateToggleText">VIEW ALL 35 SENATE RACES</span><span id="senateToggleIcon" aria-hidden="true">&#9662;</span></div>
         </article>
+      </div>
+
+      <p class="chamber-hint">Select a chamber to open its full race board. Both totals refresh automatically every 15 minutes during live coverage.</p>
+    </div>
+  </section>
+
+  <section class="latest-strip" aria-labelledby="latestTitle">
+    <div class="wrap latest-inner">
+      <div class="latest-head">
+        <span class="latest-label" id="latestTitle"><span class="live-dot muted" id="latestDot"></span> LATEST CALLS</span>
+        <span class="calls-count" id="callsCount">0</span>
+      </div>
+      <div id="latestCalls" class="latest-list">
+        <p class="side-empty">No races called yet. Calls will appear here as they are made.</p>
+      </div>
+      <div class="latest-next">
+        <span>NEXT POLLS</span>
+        <b id="nextPollLabel">KY, IN &bull; 6:00 PM ET</b>
       </div>
     </div>
   </section>
 
-  <div class="wrap content-grid">
-    <section class="race-center" id="race-center" aria-labelledby="raceCenterTitle">
-      <div class="race-head">
+  <section class="race-board" id="raceBoard" aria-labelledby="raceBoardTitle" hidden>
+    <div class="wrap">
+      <div class="board-head">
         <div>
-          <div class="section-kicker">LIVE FROM THE STATES</div>
-          <h2 id="raceCenterTitle">RACE CENTER</h2>
+          <div class="section-kicker" id="raceBoardKicker">LIVE RACES</div>
+          <h2 id="raceBoardTitle">U.S. HOUSE RACES</h2>
+          <p id="raceBoardSub">ALL 435 VOTING DISTRICTS &bull; UNOFFICIAL RESULTS</p>
         </div>
-        <div class="race-head-right">
-          <span class="pill unofficial">UNOFFICIAL RESULTS</span>
-          <button id="refreshBtn" class="refresh-btn" type="button">&#8635; REFRESH NOW</button>
+        <div class="board-actions">
+          <span class="pill unofficial">UNOFFICIAL</span>
+          <button id="refreshBtn" class="refresh-btn" type="button">&#8635; REFRESH</button>
+          <button id="raceBoardClose" class="board-close" type="button">CLOSE &times;</button>
         </div>
-      </div>
-
-      <div class="data-alert" id="dataAlert" hidden></div>
-
-      <div class="tabs" role="tablist" aria-label="Race categories">
-        <button class="tab active" type="button" data-tab="senate" role="tab" aria-selected="true">SENATE <span id="tabSenateCount">35</span></button>
-        <button class="tab" type="button" data-tab="house" role="tab" aria-selected="false">HOUSE <span id="tabHouseCount">435</span></button>
-        <button class="tab" type="button" data-tab="all" role="tab" aria-selected="false">ALL RACES <span id="tabAllCount">470</span></button>
       </div>
 
       <div class="controls">
@@ -2483,7 +3193,7 @@ img, svg { display: block; max-width: 100%; }
       </div>
 
       <div class="results-meta">
-        <span id="resultsCount">Showing 35 Senate races</span>
+        <span id="resultsCount">Choose a chamber to open its races.</span>
         <span id="resultsUpdated" aria-live="polite">Awaiting first data check</span>
       </div>
 
@@ -2491,59 +3201,10 @@ img, svg { display: block; max-width: 100%; }
       <div id="emptyState" class="empty-state" hidden>
         <div class="empty-star" aria-hidden="true">★</div>
         <h3>No races match</h3>
-        <p>Try a different state, candidate or filter. Clear the search to see every race in this category.</p>
+        <p>Try a different state, candidate or filter. Clear the search to see every race in this chamber.</p>
       </div>
-    </section>
-
-    <aside class="sidebar" aria-label="Election analysis and data desk">
-      <section class="side-card live-math" aria-labelledby="liveMathTitle">
-        <div class="side-head"><span class="side-kicker">LIVE MATH</span><span class="live-dot" id="mathDot"></span></div>
-        <h3 id="liveMathTitle">THE PATH, RIGHT NOW</h3>
-        <div class="math-line"><span>House D called</span><b id="sideHouseD">0</b></div>
-        <div class="math-line"><span>House seats remaining</span><b id="sideHouseOut">435</b></div>
-        <div class="math-divider"></div>
-        <div class="math-line"><span>Senate D base</span><b>34</b></div>
-        <div class="math-line"><span>Senate D called</span><b id="sideSenateD">0</b></div>
-        <div class="math-line total"><span>Senate D total</span><b id="sideSenateTotal">34</b></div>
-        <div class="math-divider"></div>
-        <div class="math-line need"><span>House D seats needed</span><b id="sideHouseNeed">218</b></div>
-        <div class="math-line need"><span>Senate D seats needed</span><b id="sideSenateNeed">17</b></div>
-        <p class="side-note">Senate base = 34 Democratic/I-independent seats not up in 2026. The House has no base: all 435 seats are up.</p>
-      </section>
-
-      <section class="side-card calls-card" aria-labelledby="callsTitle">
-        <div class="side-head"><span class="side-kicker">RACE CALLS</span><span class="calls-count" id="callsCount">0</span></div>
-        <h3 id="callsTitle">LATEST CALLS</h3>
-        <div id="latestCalls" class="latest-calls"><p class="side-empty">No races called yet. Calls will appear here as they are made.</p></div>
-      </section>
-
-      <section class="side-card poll-card" id="poll-times" aria-labelledby="pollTitle">
-        <div class="side-head"><span class="side-kicker">POLL CLOSING WATCH</span><span aria-hidden="true" style="color:#b28a2e;font-size:14px;">&#9719;</span></div>
-        <h3 id="pollTitle">WHEN THE VOTES COME IN</h3>
-        <div id="pollTimeline" class="poll-timeline"></div>
-        <p class="side-note">First statewide closing wave. Some states close at multiple times across time zones. All times Eastern.</p>
-      </section>
-
-      <section class="side-card stakes-card" aria-labelledby="stakesTitle">
-        <div class="side-head"><span class="side-kicker">WHAT'S AT STAKE</span></div>
-        <h3 id="stakesTitle">CONTROL OF CONGRESS</h3>
-        <ul class="stakes-list">
-          <li><strong>The House</strong> decides the speakership, committee gavels and the floor agenda for the next Congress.</li>
-          <li><strong>The Senate</strong> confirms judges and executive nominees and sets the chamber's investigative agenda.</li>
-          <li><strong>The tie</strong> matters: a 50&ndash;50 Senate still organizes under Republican control because the vice president breaks the tie.</li>
-          <li><strong>The GOP cushion</strong> is two seats in the House (220) and two in the Senate (53); a 50&ndash;50 Senate also favors Republicans.</li>
-        </ul>
-      </section>
-
-      <section class="side-card data-card" aria-labelledby="dataTitle">
-        <div class="side-head"><span class="side-kicker" id="dataTitle">DATA DESK</span><span class="ok-dot" id="dataDot"></span></div>
-        <div class="data-row"><span>Source</span><a href="https://civicapi.org" target="_blank" rel="noopener">civicAPI</a></div>
-        <div class="data-row"><span>Refresh</span><b>Every 15 min</b></div>
-        <div class="data-row"><span>Window</span><b>6:00 PM&ndash;2:00 AM ET</b></div>
-        <div class="data-row"><span>Status</span><b id="dataStatus">Awaiting live window</b></div>
-      </section>
-    </aside>
-  </div>
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer">
@@ -2554,9 +3215,8 @@ img, svg { display: block; max-width: 100%; }
       <p style="margin:0;">An independent civic dashboard. Not affiliated with Fox News, any news network, political party, campaign or election authority. Background: <a href="https://apnews.com/projects/2026-us-elections-senate-key-races-to-watch/" target="_blank" rel="noopener">AP 2026 Senate races</a>, <a href="https://www.270towin.com/2026-senate-election/" target="_blank" rel="noopener">270toWin</a>.</p>
     </div>
     <div class="footer-links">
-      <a href="#race-center">Live results</a>
-      <a href="#path">The math</a>
-      <a href="#poll-times">Poll closing times</a>
+      <a href="#houseCard">House totals</a>
+      <a href="#senateCard">Senate totals</a>
       <a href="https://civicapi.org" target="_blank" rel="noopener">Data source</a>
     </div>
   </div>
@@ -2714,7 +3374,7 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
   const app = {
     races: [],
     phase: "pre",
-    activeTab: "senate",
+    openChamber: null,
     search: "",
     stateFilter: "",
     sort: "state",
@@ -3312,6 +3972,29 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
 
   /* ---------- Render: coverage clock ---------- */
 
+  function updateNextPollLabel() {
+    const el = $("nextPollLabel");
+    if (!el) return;
+
+    if (app.phase === "pre") {
+      el.textContent = "KY, IN \u2022 6:00 PM ET";
+      return;
+    }
+    if (app.phase === "final") {
+      el.textContent = "POLLS CLOSED";
+      return;
+    }
+
+    const index = pollNextIndex();
+    if (index < 0) {
+      el.textContent = "FINAL POLLS \u2022 1:00 AM ET";
+      return;
+    }
+    const wave = POLL_WAVES[index];
+    const firstState = wave.states.split(",")[0];
+    el.textContent = firstState.toUpperCase() + " \u2022 " + wave.time + " ET";
+  }
+
   function updateClocks(t) {
     const now = t == null ? nowMs() : t;
     const phase = app.phase;
@@ -3351,7 +4034,8 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
     setText("nextRefreshTop", nextLabel);
     const progressEl = $("coverageProgress");
     if (progressEl) progressEl.style.width = progress + "%";
-    setText("tickerClock", timeET(now));
+    setText("crawlClock", timeET(now));
+    updateNextPollLabel();
 
     const navStatus = $("navStatus");
     if (navStatus) {
@@ -3377,11 +4061,12 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
 
     const boardStatus = $("boardStatus");
     if (boardStatus) {
+      const calledLabel = called + (called === 1 ? " RACE CALLED" : " RACES CALLED");
       boardStatus.textContent = phase === "pre"
         ? "PRE-SHOW • POLLS NOT YET CLOSED"
         : phase === "final"
-          ? "FINAL • " + called + " RACES CALLED"
-          : "LIVE • " + called + " RACES CALLED";
+          ? "FINAL • " + calledLabel
+          : "LIVE • " + calledLabel;
     }
     const boardDot = $("boardDot");
     if (boardDot) {
@@ -3466,30 +4151,10 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
 
     setText("houseNote", hCalled > 0
       ? hCalled + " of 435 called"
-      : "GOP won 220–215 in 2024");
+      : "215 + 3 = 218");
     setText("senateNote", sCalled > 0
-      ? "D " + sDTotal + " • R " + sRTotal + " • " + sOut + " up"
-      : "D/I caucus holds 47 seats");
-
-    setText("heroCalled", totalCalled());
-    setText("pathLive", totalCalled() + " OF 470 RACES CALLED");
-    setText("callsCount", totalCalled());
-
-    const sideHouseD = $("sideHouseD");
-    if (sideHouseD) sideHouseD.textContent = hd;
-    const sideHouseOut = $("sideHouseOut");
-    if (sideHouseOut) sideHouseOut.textContent = hOut;
-    const sideSenateD = $("sideSenateD");
-    if (sideSenateD) sideSenateD.textContent = sd;
-    const sideSenateTotal = $("sideSenateTotal");
-    if (sideSenateTotal) sideSenateTotal.textContent = sDTotal;
-    const sideHouseNeed = $("sideHouseNeed");
-    if (sideHouseNeed) sideHouseNeed.textContent = Math.max(0, 218 - hd);
-    const sideSenateNeed = $("sideSenateNeed");
-    if (sideSenateNeed) sideSenateNeed.textContent = Math.max(0, 51 - sDTotal);
-
-    const mathDot = $("mathDot");
-    if (mathDot) mathDot.className = "live-dot " + (app.phase === "live" && !app.isRefreshing ? "" : "muted");
+      ? "D " + sDTotal + " \u2022 R " + sRTotal + " \u2022 " + sOut + " up"
+      : "47 + 4 = 51");
   }
 
   /* ---------- Render: race cards ---------- */
@@ -3583,12 +4248,9 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
   }
 
   function filteredRaces() {
-    const tab = app.activeTab;
-    let list = app.races.filter(function (r) {
-      if (tab === "senate") return r.office === "S";
-      if (tab === "house") return r.office === "H";
-      return true;
-    });
+    if (!app.openChamber) return [];
+    const office = app.openChamber === "house" ? "H" : "S";
+    let list = app.races.filter(function (r) { return r.office === office; });
 
     if (app.stateFilter) {
       list = list.filter(function (r) { return r.state === app.stateFilter; });
@@ -3635,15 +4297,30 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
   function renderRaceGrid() {
     const grid = $("raceGrid");
     const empty = $("emptyState");
+    const board = $("raceBoard");
     if (!grid) return;
 
-    const tab = app.activeTab;
-    const list = filteredRaces();
-    const baseCount = app.races.filter(function (r) {
-      return tab === "senate" ? r.office === "S" : tab === "house" ? r.office === "H" : true;
-    }).length;
+    if (!app.openChamber) {
+      if (board) board.hidden = true;
+      grid.innerHTML = "";
+      grid.style.display = "";
+      if (empty) empty.hidden = true;
+      setText("resultsCount", "Choose a chamber to open its races.");
+      return;
+    }
 
-    const grouped = app.sort === "state" && (tab === "house" || tab === "all");
+    if (board) board.hidden = false;
+
+    const isHouse = app.openChamber === "house";
+    setText("raceBoardKicker", isHouse ? "LIVE HOUSE RACES" : "LIVE SENATE RACES");
+    setText("raceBoardTitle", isHouse ? "U.S. HOUSE RACES" : "U.S. SENATE RACES");
+    setText("raceBoardSub", isHouse
+      ? "ALL 435 VOTING DISTRICTS \u2022 UNOFFICIAL RESULTS"
+      : "35 SEATS \u2022 22 R / 13 D \u2022 UNOFFICIAL RESULTS");
+
+    const list = filteredRaces();
+    const baseCount = isHouse ? 435 : 35;
+    const grouped = app.sort === "state" && isHouse;
 
     grid.classList.toggle("is-grouped", grouped);
 
@@ -3658,7 +4335,7 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
         if (copy) {
           copy.textContent = app.calledOnly
             ? "Race calls will appear here as results come in. Clear the filter to see the full board."
-            : "Try a different state, candidate or filter. Clear the search to see every race in this category.";
+            : "Try a different state, candidate or filter. Clear the search to see every race in this chamber.";
         }
       }
     } else {
@@ -3666,36 +4343,22 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
       if (empty) empty.hidden = true;
 
       if (grouped) {
-        if (tab === "house") {
-          grid.innerHTML = groupByState(list).map(function (entry) {
-            return stateGroupHtml(entry[0], entry[1]);
-          }).join("");
-        } else {
-          const senate = list.filter(function (r) { return r.office === "S"; });
-          const house = list.filter(function (r) { return r.office === "H"; });
-          grid.innerHTML = officeGroupHtml("U.S. Senate", senate) +
-            groupByState(house).map(function (entry) {
-              return stateGroupHtml(entry[0], entry[1]);
-            }).join("");
-        }
+        grid.innerHTML = groupByState(list).map(function (entry) {
+          return stateGroupHtml(entry[0], entry[1]);
+        }).join("");
       } else {
         grid.innerHTML = list.map(cardHtml).join("");
       }
     }
 
-    const label = tab === "senate" ? "Senate " : tab === "house" ? "House " : "";
     let countText;
     if (list.length === baseCount) {
-      countText = "Showing " + baseCount + " " + label + (baseCount === 1 ? "race" : "races");
+      countText = "Showing " + baseCount + (isHouse ? " House" : " Senate") + " races";
     } else {
-      countText = "Showing " + list.length + " of " + baseCount + " " + label + "races";
+      countText = "Showing " + list.length + " of " + baseCount + (isHouse ? " House" : " Senate") + " races";
     }
-    if (app.calledOnly) countText += " • called only";
+    if (app.calledOnly) countText += " \u2022 called only";
     setText("resultsCount", countText);
-
-    setText("tabSenateCount", app.races.filter(function (r) { return r.office === "S"; }).length);
-    setText("tabHouseCount", app.races.filter(function (r) { return r.office === "H"; }).length);
-    setText("tabAllCount", app.races.length);
   }
 
   /* ---------- Render: latest calls ---------- */
@@ -3708,14 +4371,19 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
     });
 
     setText("callsCount", called.length);
+    const latestDot = $("latestDot");
+    if (latestDot) latestDot.className = "live-dot " + (called.length ? "" : "muted");
 
     if (!called.length) {
-      box.innerHTML = '<p class="side-empty">No races called yet. Calls will appear here as they are made.</p>';
+      const emptyText = app.phase === "pre"
+        ? "No races called yet. First polls close at 6:00 PM ET in Kentucky and most of Indiana."
+        : "No races called yet. Calls will appear here as they are made.";
+      box.innerHTML = '<p class="side-empty">' + escapeHtml(emptyText) + '</p>';
       return;
     }
 
-    const visible = called.slice(0, 6);
-    let html = visible.map(function (r) {
+    const visible = called.slice(0, 5);
+    const html = visible.map(function (r) {
       const winner = r.winner;
       return '<button type="button" class="call-item" data-race-id="' + r.id + '" aria-label="Open ' + escapeHtml(titleFor(r)) + '">' +
         '<span class="call-badge">' + escapeHtml(r.state) + '</span>' +
@@ -3726,14 +4394,6 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
         '<span class="call-party ' + partyClass(r.winnerParty) + '">' + partyShort(r.winnerParty) + '</span>' +
         '</button>';
     }).join("");
-
-    if (called.length > visible.length) {
-      html += '<button type="button" class="call-item" data-action="all-called">' +
-        '<span class="call-badge" style="background:#b28a2e;">★</span>' +
-        '<span class="call-copy"><span class="call-office">FULL BOARD</span><span class="call-name">View all ' + called.length + ' called races</span></span>' +
-        '<span class="call-party">›</span>' +
-        '</button>';
-    }
 
     box.innerHTML = html;
   }
@@ -3765,9 +4425,9 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
   /* ---------- Render: ticker ---------- */
 
   function renderTicker() {
-    const a = $("tickerA");
-    const b = $("tickerB");
-    const labelEl = $("tickerLabel");
+    const a = $("crawlA");
+    const b = $("crawlB");
+    const labelEl = $("crawlLabel");
     if (!a || !b || !labelEl) return;
 
     const called = totalCalled();
@@ -3782,7 +4442,7 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
     } else if (app.phase === "live") {
       items.push("LIVE: " + called + " of 470 races called.");
       if (app.newCalls.length) {
-        items.push("NEW CALLS: " + app.newCalls.slice(0, 4).map(function (r) {
+        items.push((app.newCalls.length === 1 ? "NEW CALL: " : "NEW CALLS: ") + app.newCalls.slice(0, 4).map(function (r) {
           return r.state + " " + (r.office === "S" ? "Senate" : "House " + (r.districtNum !== 999 ? r.districtNum : "AL")) + " — " + r.winner.name;
         }).join(" • ") + ".");
       }
@@ -3801,10 +4461,10 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
     }
 
     let label = "PRE-SHOW";
-    let cls = "ticker-label";
+    let cls = "crawl-label";
     if (app.phase === "live") {
       label = app.isRefreshing ? "UPDATING" : "LIVE";
-      cls = "ticker-label";
+      cls = "crawl-label";
     } else if (app.phase === "final") {
       label = "FINAL";
     }
@@ -3882,7 +4542,7 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
 
     if (app.lastError && app.successStates === 0) {
       alert.hidden = false;
-      alert.className = "data-alert error";
+      alert.className = "data-alert data-alert-global error";
       alert.textContent = "Live data connection issue. Showing the last saved snapshot" +
         (app.lastSuccessAt ? " from " + timeET(app.lastSuccessAt.getTime()) : "") +
         ". The desk will retry automatically.";
@@ -3905,28 +4565,79 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
     updateClocks();
   }
 
-  /* ---------- Tabs, filters and events ---------- */
+  /* ---------- Chamber expansion, filters and events ---------- */
 
-  function setTab(tab, shouldScroll) {
-    if (["senate", "house", "all"].indexOf(tab) === -1) tab = "senate";
-    app.activeTab = tab;
+  function updateChamberButtons() {
+    const house = $("houseCard");
+    const senate = $("senateCard");
+    const houseOpen = app.openChamber === "house";
+    const senateOpen = app.openChamber === "senate";
 
-    document.querySelectorAll(".tab").forEach(function (el) {
-      const active = el.dataset.tab === tab;
-      el.classList.toggle("active", active);
-      el.setAttribute("aria-selected", active ? "true" : "false");
-    });
+    if (house) {
+      house.classList.toggle("active", houseOpen);
+      house.setAttribute("aria-expanded", houseOpen ? "true" : "false");
+      house.setAttribute("aria-label", houseOpen
+        ? "U.S. House totals — close House races"
+        : "U.S. House totals — open all 435 House races");
+    }
+    if (senate) {
+      senate.classList.toggle("active", senateOpen);
+      senate.setAttribute("aria-expanded", senateOpen ? "true" : "false");
+      senate.setAttribute("aria-label", senateOpen
+        ? "U.S. Senate totals — close Senate races"
+        : "U.S. Senate totals — open all 35 Senate races");
+    }
 
-    document.querySelectorAll(".nav-links a[data-tab-link]").forEach(function (el) {
-      el.classList.toggle("active", el.dataset.tabLink === tab);
-    });
+    setText("houseToggleText", houseOpen ? "HIDE HOUSE RACES" : "VIEW ALL 435 HOUSE RACES");
+    setText("senateToggleText", senateOpen ? "HIDE SENATE RACES" : "VIEW ALL 35 SENATE RACES");
+    setText("houseToggleIcon", houseOpen ? "\u25B4" : "\u25BE");
+    setText("senateToggleIcon", senateOpen ? "\u25B4" : "\u25BE");
+  }
 
-    populateStateFilter();
+  function closeChamber(shouldScroll) {
+    const previous = app.openChamber;
+    app.openChamber = null;
+    updateChamberButtons();
     renderRaceGrid();
 
     if (shouldScroll) {
-      const target = $("race-center");
+      const target = previous === "senate" ? $("senateCard") : $("houseCard");
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function openChamber(chamber) {
+    app.openChamber = chamber;
+    app.search = "";
+    app.stateFilter = "";
+    app.sort = "state";
+    app.calledOnly = false;
+
+    const search = $("searchInput");
+    if (search) search.value = "";
+    const sort = $("sortSelect");
+    if (sort) sort.value = "state";
+    const calledOnly = $("calledOnly");
+    if (calledOnly) calledOnly.checked = false;
+
+    updateChamberButtons();
+    populateStateFilter();
+    renderRaceGrid();
+
+    const board = $("raceBoard");
+    if (board) {
+      board.hidden = false;
+      setTimeout(function () {
+        board.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 60);
+    }
+  }
+
+  function toggleChamber(chamber) {
+    if (app.openChamber === chamber) {
+      closeChamber(false);
+    } else {
+      openChamber(chamber);
     }
   }
 
@@ -3934,8 +4645,15 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
     const select = $("stateFilter");
     if (!select) return;
 
+    if (!app.openChamber) {
+      select.innerHTML = '<option value="">ALL STATES</option>';
+      select.value = "";
+      return;
+    }
+
+    const office = app.openChamber === "house" ? "H" : "S";
     const available = new Set(app.races.filter(function (r) {
-      return app.activeTab === "senate" ? r.office === "S" : app.activeTab === "house" ? r.office === "H" : true;
+      return r.office === office;
     }).map(function (r) { return r.state; }));
 
     if (app.stateFilter && !available.has(app.stateFilter)) app.stateFilter = "";
@@ -3953,16 +4671,22 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
   }
 
   function bindEvents() {
-    document.querySelectorAll(".tab").forEach(function (el) {
-      el.addEventListener("click", function () { setTab(el.dataset.tab, false); });
-    });
-
-    document.querySelectorAll("[data-tab-link]").forEach(function (el) {
-      el.addEventListener("click", function (ev) {
-        ev.preventDefault();
-        setTab(el.dataset.tabLink, true);
+    document.querySelectorAll("[data-chamber]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        toggleChamber(el.dataset.chamber);
+      });
+      el.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.key === " ") {
+          ev.preventDefault();
+          toggleChamber(el.dataset.chamber);
+        }
       });
     });
+
+    const boardClose = $("raceBoardClose");
+    if (boardClose) {
+      boardClose.addEventListener("click", function () { closeChamber(true); });
+    }
 
     const search = $("searchInput");
     if (search) {
@@ -4016,20 +4740,11 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
       });
     }
 
-    const calls = $("latestCalls");
-    if (calls) {
-      calls.addEventListener("click", function (ev) {
+    const latestCalls = $("latestCalls");
+    if (latestCalls) {
+      latestCalls.addEventListener("click", function (ev) {
         const item = ev.target.closest(".call-item");
-        if (!item) return;
-        if (item.dataset.action === "all-called") {
-          const calledOnly = $("calledOnly");
-          if (calledOnly) calledOnly.checked = true;
-          app.calledOnly = true;
-          setTab("all", true);
-          return;
-        }
-        const id = Number(item.dataset.raceId);
-        if (id) openRace(id);
+        if (item && item.dataset.raceId) openRace(Number(item.dataset.raceId));
       });
     }
 
@@ -4050,7 +4765,7 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
 
     document.addEventListener("keydown", function (ev) {
       const tag = (ev.target && ev.target.tagName) || "";
-      if (ev.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(tag)) {
+      if (ev.key === "/" && app.openChamber && !/INPUT|TEXTAREA|SELECT/.test(tag)) {
         ev.preventDefault();
         if (search) search.focus();
       }
@@ -4068,6 +4783,7 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
       if (!document.hidden) updateClocks();
     });
   }
+
 
   /* ---------- Modal ---------- */
 
@@ -4234,6 +4950,7 @@ window.ELECTION_SEED={"generatedAt":"2026-11-03T13:10:13.344Z","source":"civicap
     app.phase = getPhase(nowMs());
     app.nextRefresh = computeNextRefresh(nowMs());
 
+    updateChamberButtons();
     populateStateFilter();
     renderAll();
     updateClocks();

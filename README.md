@@ -2,7 +2,7 @@
 
 ![Dashboard preview](preview.png)
 
-An independent, self-contained HTML dashboard for live, unofficial 2026 Senate and House results. It is designed as a patriotic national results desk: balance-of-power meters, the Democrats' path to 218 and 51, all 435 voting House races, all 35 Senate races, poll-closing times and a live race-call feed.
+An independent, self-contained HTML dashboard for live, unofficial 2026 Senate and House results. The landing page stays intentionally short: two large chamber-total cards. Click **House** or **Senate** to expand that chamber's full race board. Opening one closes the other so the landing page stays compact.
 
 ## Open it
 
@@ -31,12 +31,13 @@ The page fetches once when opened, then follows the fixed 6 PM–2 AM window. It
 ## What is on the dashboard
 
 - All **35 Senate races**, including the Florida and Ohio special elections.
-- All **435 voting House races**, grouped by state and searchable/filterable.
-- Balance-of-power meters for **218 House seats** and **51 Senate seats**.
-- Called-seat totals, latest calls, race-call badges and Senate seat flips.
+- All **435 voting House races**, grouped by state and searchable/filterable once expanded.
+- A Fox-style red crawl at the top, plus a latest-calls strip and next-poll countdown.
+- Two expandable chamber cards: House totals and Senate totals side by side.
+- **218 House seats** and **51 Senate seats** to control, with called totals and party splits.
 - The Democrats' math: **215 + 3 = 218** in the House and **47 + 4 = 51** in the Senate, with the 50–50 tie rule.
-- Poll-closing watch, key-race markers, candidate percentages and vote totals.
-- Race detail modal with all candidates and county-level results when the source has them.
+- Each card opens a searchable, filterable race board with candidate percentages and vote totals.
+- Key-race markers, Senate seat flips and a race-detail modal with county-level results when available.
 
 ## Data
 
@@ -86,6 +87,8 @@ The included `.nojekyll` file tells GitHub Pages to serve the files directly. In
 
 - **`index.html`** — the complete, self-contained dashboard. Open this.
 - `src/` — editable source files and the embedded seed snapshot.
+- `src/styles.css` — base dashboard, race-card and modal styles.
+- `src/styles-v2.css` — simplified two-card landing layout.
 - `src/build.mjs` — rebuilds `index.html` from `src/`.
 - `serve.mjs` — optional local static server (no dependencies).
 

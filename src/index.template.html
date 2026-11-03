@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The American Decision 2026 | Live Midterm Results</title>
+<meta name="description" content="Live, unofficial 2026 Senate and House election totals. Choose a chamber to open every race.">
+<meta name="theme-color" content="#07182c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2307182c' stroke='%23b28a2e' stroke-width='3'/%3E%3Cpath d='M32 12l5.9 14.7 15.8 1.2-12.1 10.2 3.7 15.4L32 45.2 18.7 53.5l3.7-15.4L10.3 27.9l15.8-1.2z' fill='%23d6b25e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700;8..60,900&display=swap" rel="stylesheet">
+<style>
+{{STYLES}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#chambers">Skip to chamber totals</a>
+
+<div class="top-rule" aria-hidden="true"></div>
+
+<div class="crawl-bar" role="region" aria-label="Live election crawl">
+  <div class="crawl-label" id="crawlLabel"><span class="live-dot muted"></span> PRE-SHOW</div>
+  <div class="crawl-track">
+    <div class="crawl-content" id="crawlContent">
+      <span id="crawlA">Live coverage begins at 6:00 PM ET. All 435 House seats and 35 Senate seats are on the ballot.</span>
+      <span id="crawlB" aria-hidden="true">Live coverage begins at 6:00 PM ET. All 435 House seats and 35 Senate seats are on the ballot.</span>
+    </div>
+  </div>
+  <div class="crawl-time" id="crawlClock">8:00 AM ET</div>
+</div>
+
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <a class="brand" href="#top" aria-label="The American Decision 2026 home">
+      <span class="seal" aria-hidden="true">
+        <svg viewBox="0 0 100 100" role="img" aria-label="2026 star seal">
+          <defs>
+            <radialGradient id="sealNavy" cx="50%" cy="35%" r="70%">
+              <stop offset="0%" stop-color="#143657"/>
+              <stop offset="100%" stop-color="#061426"/>
+            </radialGradient>
+          </defs>
+          <circle cx="50" cy="50" r="48" fill="#f3f0e8" stroke="#b28a2e" stroke-width="1.4"/>
+          <circle cx="50" cy="50" r="44" fill="url(#sealNavy)" stroke="#d6b25e" stroke-width="1"/>
+          <circle cx="50" cy="50" r="36.5" fill="none" stroke="#d6b25e" stroke-width="0.55" stroke-dasharray="1 2.4"/>
+          <g fill="#fff">
+            <circle cx="50" cy="11.5" r="1.15"/><circle cx="63.5" cy="15.1" r="1.15"/><circle cx="74.9" cy="23.4" r="1.15"/>
+            <circle cx="81.5" cy="35.5" r="1.15"/><circle cx="81.5" cy="49.2" r="1.15"/><circle cx="74.9" cy="61.4" r="1.15"/>
+            <circle cx="63.5" cy="69.7" r="1.15"/><circle cx="50" cy="73.3" r="1.15"/><circle cx="36.5" cy="69.7" r="1.15"/>
+            <circle cx="25.1" cy="61.4" r="1.15"/><circle cx="18.5" cy="49.2" r="1.15"/><circle cx="18.5" cy="35.5" r="1.15"/>
+            <circle cx="25.1" cy="23.4" r="1.15"/><circle cx="36.5" cy="15.1" r="1.15"/>
+          </g>
+          <path d="M50 25.2l4.3 10.7 11.5.9-8.8 7.4 2.7 11.2L50 49.1l-9.7 6.3 2.7-11.2-8.8-7.4 11.5-.9z" fill="#d6b25e"/>
+          <text x="50" y="83.4" text-anchor="middle" fill="#d6b25e" font-family="Arial Narrow, Arial, sans-serif" font-size="7.4" font-weight="700" letter-spacing="2.2">2026</text>
+        </svg>
+      </span>
+      <span class="brand-copy">
+        <span class="brand-eyebrow">THE AMERICAN DECISION</span>
+        <span class="brand-title">2026 MIDTERM ELECTIONS</span>
+        <span class="brand-sub">TUESDAY, NOVEMBER 3, 2026 <span class="red">•</span> UNOFFICIAL LIVE RESULTS</span>
+      </span>
+    </a>
+
+    <div class="coverage-box" aria-live="polite">
+      <div class="coverage-top">
+        <span id="phaseBadge" class="phase-badge">PRE-SHOW</span>
+        <span id="coverageClock" class="coverage-clock">00:00:00</span>
+      </div>
+      <div id="coverageLabel" class="coverage-label">UNTIL LIVE COVERAGE BEGINS</div>
+      <div class="coverage-progress" aria-hidden="true"><span id="coverageProgress"></span></div>
+      <div class="coverage-meta"><span>6:00 PM &ndash; 2:00 AM ET</span><span id="nextRefreshTop">FIRST UPDATE 6:00 PM</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="desk-bar">
+  <div class="wrap desk-bar-inner">
+    <div class="desk-left"><span class="live-dot muted" id="boardDot"></span><b id="boardStatus">PRE-SHOW &bull; POLLS NOT YET CLOSED</b></div>
+    <div class="desk-mid"><span class="ok-dot" id="dataDot"></span><span id="dataStatus">Pre-show snapshot</span><span class="desk-sep">&bull;</span><span>UNOFFICIAL RESULTS</span></div>
+    <div class="desk-right"><span id="boardUpdated">AWAITING FIRST DATA CHECK</span></div>
+  </div>
+</div>
+
+<div id="dataAlert" class="data-alert data-alert-global" hidden></div>
+
+<main id="top">
+  <section class="landing-intro" id="chambers" aria-labelledby="introTitle">
+    <svg class="intro-flag" viewBox="0 0 760 420" aria-hidden="true" focusable="false">
+      <defs>
+        <pattern id="introStars" width="38" height="38" patternUnits="userSpaceOnUse">
+          <path d="M19 4l3.2 8.1 8.7.6-6.7 5.5 2.1 8.5-7.3-4.7-7.3 4.7 2.1-8.5-6.7-5.5 8.7-.6z" fill="#ffffff"/>
+        </pattern>
+      </defs>
+      <rect width="760" height="420" fill="#ffffff"/>
+      <g fill="#b5122b">
+        <rect y="0" width="760" height="32"/><rect y="64" width="760" height="32"/>
+        <rect y="128" width="760" height="32"/><rect y="192" width="760" height="32"/>
+        <rect y="256" width="760" height="32"/><rect y="320" width="760" height="32"/>
+        <rect y="384" width="760" height="32"/>
+      </g>
+      <rect width="342" height="226" fill="#0b2440"/>
+      <rect width="342" height="226" fill="url(#introStars)"/>
+    </svg>
+    <div class="wrap">
+      <div class="intro-kicker"><span class="intro-badge">SPECIAL COVERAGE</span> DECISION 2026 <span>|</span> NATIONAL RESULTS DESK</div>
+      <h1 id="introTitle">WHO CONTROLS CONGRESS?</h1>
+      <p>Choose a chamber to see the live totals. Open it to see every race.</p>
+      <div class="math-bar" aria-label="Democrats need three House seats and four Senate seats">
+        <span class="math-label">DEMOCRATS NEED</span>
+        <span><b>+3</b> HOUSE</span>
+        <span><b>+4</b> SENATE</span>
+        <span class="math-note">A 50&ndash;50 Senate still favors Republicans &mdash; the vice president breaks the tie.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="chambers-section" aria-label="Chamber totals">
+    <div class="wrap">
+      <div class="chambers-head">
+        <div>
+          <div class="section-kicker">THE ROAD TO CONTROL</div>
+          <h2>BALANCE OF POWER</h2>
+        </div>
+        <div class="chambers-note">SELECT A CHAMBER TO OPEN ITS RACES</div>
+      </div>
+      <div class="chamber-grid">
+        <article class="chamber-card house" id="houseCard" data-chamber="house" role="button" tabindex="0" aria-expanded="false" aria-controls="raceBoard">
+          <div class="chamber-head">
+            <div>
+              <span class="chamber-kicker">U.S. HOUSE</span>
+              <h2>HOUSE</h2>
+              <span class="chamber-sub">ALL 435 VOTING SEATS</span>
+            </div>
+            <div class="chamber-threshold"><b>218</b><span>TO CONTROL</span></div>
+          </div>
+
+          <div class="chamber-called"><b id="houseCalled">0</b><span>OF 435 CALLED</span></div>
+
+          <div class="chamber-split">
+            <span class="d"><b id="houseDCalled">0</b> DEM</span>
+            <span class="r"><b id="houseRCalled">0</b> GOP</span>
+            <span class="o"><b id="houseOut">435</b> OUT</span>
+          </div>
+
+          <div class="chamber-bar" id="houseBar" role="img" aria-label="House seats called">
+            <span class="seat-dem" id="houseBarD"></span>
+            <span class="seat-other" id="houseBarO"></span>
+            <span class="seat-gop" id="houseBarR"></span>
+            <span class="threshold-mark" style="left:50.11%"><i>218</i></span>
+          </div>
+
+          <div class="chamber-foot">
+            <span class="need-chip" id="houseNeedChip">DEMS NEED NET +3</span>
+            <span id="houseNote">215 + 3 = 218</span>
+          </div>
+
+          <div class="chamber-cta"><span id="houseToggleText">VIEW ALL 435 HOUSE RACES</span><span id="houseToggleIcon" aria-hidden="true">&#9662;</span></div>
+        </article>
+
+        <article class="chamber-card senate" id="senateCard" data-chamber="senate" role="button" tabindex="0" aria-expanded="false" aria-controls="raceBoard">
+          <div class="chamber-head">
+            <div>
+              <span class="chamber-kicker">U.S. SENATE</span>
+              <h2>SENATE</h2>
+              <span class="chamber-sub">35 SEATS &bull; 22 R / 13 D</span>
+            </div>
+            <div class="chamber-threshold"><b>51</b><span>TO CONTROL</span></div>
+          </div>
+
+          <div class="chamber-called"><b id="senateCalled">0</b><span>OF 35 CALLED</span></div>
+
+          <div class="chamber-split">
+            <span class="d"><b id="senateDCalled">34</b> DEM</span>
+            <span class="r"><b id="senateRCalled">31</b> GOP</span>
+            <span class="o"><b id="senateOut">35</b> UP</span>
+          </div>
+
+          <div class="chamber-bar" id="senateBar" role="img" aria-label="Senate seats called">
+            <span class="seat-dem" id="senateBarD"></span>
+            <span class="seat-other" id="senateBarO"></span>
+            <span class="seat-gop" id="senateBarR"></span>
+            <span class="threshold-mark" style="left:51%"><i>51</i></span>
+          </div>
+
+          <div class="chamber-foot">
+            <span class="need-chip" id="senateNeedChip">DEMS NEED NET +4</span>
+            <span id="senateNote">47 + 4 = 51</span>
+          </div>
+
+          <div class="chamber-tie">D/I caucus starts at 47. A 50&ndash;50 Senate still organizes under Republican control.</div>
+
+          <div class="chamber-cta"><span id="senateToggleText">VIEW ALL 35 SENATE RACES</span><span id="senateToggleIcon" aria-hidden="true">&#9662;</span></div>
+        </article>
+      </div>
+
+      <p class="chamber-hint">Select a chamber to open its full race board. Both totals refresh automatically every 15 minutes during live coverage.</p>
+    </div>
+  </section>
+
+  <section class="latest-strip" aria-labelledby="latestTitle">
+    <div class="wrap latest-inner">
+      <div class="latest-head">
+        <span class="latest-label" id="latestTitle"><span class="live-dot muted" id="latestDot"></span> LATEST CALLS</span>
+        <span class="calls-count" id="callsCount">0</span>
+      </div>
+      <div id="latestCalls" class="latest-list">
+        <p class="side-empty">No races called yet. Calls will appear here as they are made.</p>
+      </div>
+      <div class="latest-next">
+        <span>NEXT POLLS</span>
+        <b id="nextPollLabel">KY, IN &bull; 6:00 PM ET</b>
+      </div>
+    </div>
+  </section>
+
+  <section class="race-board" id="raceBoard" aria-labelledby="raceBoardTitle" hidden>
+    <div class="wrap">
+      <div class="board-head">
+        <div>
+          <div class="section-kicker" id="raceBoardKicker">LIVE RACES</div>
+          <h2 id="raceBoardTitle">U.S. HOUSE RACES</h2>
+          <p id="raceBoardSub">ALL 435 VOTING DISTRICTS &bull; UNOFFICIAL RESULTS</p>
+        </div>
+        <div class="board-actions">
+          <span class="pill unofficial">UNOFFICIAL</span>
+          <button id="refreshBtn" class="refresh-btn" type="button">&#8635; REFRESH</button>
+          <button id="raceBoardClose" class="board-close" type="button">CLOSE &times;</button>
+        </div>
+      </div>
+
+      <div class="controls">
+        <label class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+          <span class="sr-only">Search races by state, district or candidate</span>
+          <input id="searchInput" type="search" placeholder="Search state, district or candidate" autocomplete="off">
+        </label>
+        <label class="select-box">
+          <span class="sr-only">Filter by state</span>
+          <select id="stateFilter"><option value="">ALL STATES</option></select>
+        </label>
+        <label class="select-box">
+          <span class="sr-only">Sort races</span>
+          <select id="sortSelect">
+            <option value="state">STATE / DISTRICT</option>
+            <option value="closest">CLOSEST MARGIN</option>
+            <option value="reporting">MOST REPORTING</option>
+            <option value="votes">MOST VOTES</option>
+          </select>
+        </label>
+        <label class="check-box"><input id="calledOnly" type="checkbox"><span>CALLED ONLY</span></label>
+      </div>
+
+      <div class="results-meta">
+        <span id="resultsCount">Choose a chamber to open its races.</span>
+        <span id="resultsUpdated" aria-live="polite">Awaiting first data check</span>
+      </div>
+
+      <div id="raceGrid" class="race-grid"></div>
+      <div id="emptyState" class="empty-state" hidden>
+        <div class="empty-star" aria-hidden="true">★</div>
+        <h3>No races match</h3>
+        <p>Try a different state, candidate or filter. Clear the search to see every race in this chamber.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">THE AMERICAN DECISION<span>2026 NATIONAL RESULTS DESK</span></div>
+    <div class="footer-disclaimer">
+      <p style="margin:0 0 6px;">Live results are powered by <a href="https://civicapi.org" target="_blank" rel="noopener">civicAPI</a> and are <strong>unofficial</strong> until certified by state and local election authorities. Vote totals and race calls can change as ballots are counted. Poll closing times are the first statewide closing wave and may vary by time zone. House totals cover the 435 voting seats; territorial delegates are not included.</p>
+      <p style="margin:0;">An independent civic dashboard. Not affiliated with Fox News, any news network, political party, campaign or election authority. Background: <a href="https://apnews.com/projects/2026-us-elections-senate-key-races-to-watch/" target="_blank" rel="noopener">AP 2026 Senate races</a>, <a href="https://www.270towin.com/2026-senate-election/" target="_blank" rel="noopener">270toWin</a>.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#houseCard">House totals</a>
+      <a href="#senateCard">Senate totals</a>
+      <a href="https://civicapi.org" target="_blank" rel="noopener">Data source</a>
+    </div>
+  </div>
+</footer>
+
+<dialog id="raceModal" class="race-modal" aria-labelledby="modalTitle">
+  <div class="modal-head">
+    <div>
+      <div id="modalKicker" class="modal-kicker">U.S. SENATE</div>
+      <h2 id="modalTitle">Race detail</h2>
+      <div id="modalSub" class="modal-sub">UNOFFICIAL RESULTS &bull; SOURCE: CIVICAPI</div>
+    </div>
+    <button id="modalClose" class="modal-close" type="button" aria-label="Close race detail">&times;</button>
+  </div>
+  <div id="modalBody" class="modal-body"></div>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+{{SEED}}
+</script>
+<script>
+{{SCRIPT}}
+</script>
+</body>
+</html>
